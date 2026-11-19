@@ -1,0 +1,139 @@
+/* =============================================================
+   Estilos comunes de MOTOCONS (basados en DESIGN.md: Swiss Modern).
+   Blanco como color principal, negro suave para el texto y rojo como acento.
+   Úsalos en tu módulo antes de crear los tuyos. Colores y medidas en variables:
+   usa var(--color-primario), etc. Lo propio de tu módulo va en assets/css/<modulo>.css
+   ============================================================= */
+:root {
+    --color-primario: #ff3300;
+    --color-primario-oscuro: #d92b00;
+    --color-oscuro: #141414;
+    --color-texto: #1f1f1f;
+    --color-texto-suave: #5c5c5c;
+    --color-borde: #e2e2e2;
+    --color-fondo: #ffffff;
+    --color-fondo-suave: #f5f5f5;
+    --color-blanco: #ffffff;
+    --color-exito: #1f8a4c;
+    --color-error: #d32f2f;
+    --color-aviso: #a86200;
+
+    --radio: 6px;
+    --radio-boton: 9999px;
+    --sombra: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --transicion: 200ms ease-out;
+    --fuente: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--fuente);
+    color: var(--color-texto);
+    background: var(--color-fondo);
+    line-height: 1.6;
+}
+
+h1, h2, h3 { margin: 0 0 0.75rem; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; color: var(--color-oscuro); }
+h1 { font-size: clamp(1.9rem, 4vw, 2.25rem); }
+h2 { font-size: 1.5rem; }
+a { color: var(--color-primario); }
+
+/* ---------- Barra superior y pie ---------- */
+.barra {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-fondo);
+    border-bottom: 2px solid var(--color-oscuro);
+}
+.barra nav { display: flex; align-items: center; gap: 0.75rem; }
+.marca { display: flex; align-items: center; gap: 0.6rem; color: var(--color-oscuro); font-weight: 800; font-size: 1.25rem; text-decoration: none; letter-spacing: 0.02em; }
+.marca b { color: var(--color-primario); font-weight: inherit; }
+.marca-logo { width: 36px; height: 36px; }
+.barra-usuario { color: var(--color-texto-suave); font-size: 0.9rem; font-weight: 500; }
+
+.pie { padding: 1.25rem; text-align: center; font-size: 0.85rem; color: var(--color-texto-suave); border-top: 1px solid var(--color-borde); }
+
+/* ---------- Contenedor ---------- */
+.contenedor { flex: 1; width: 100%; max-width: 1280px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+
+/* ---------- Tarjeta ---------- */
+.tarjeta {
+    background: var(--color-blanco);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    padding: 1.5rem;
+}
+
+/* ---------- Botones: <button class="btn"> o <a class="btn"> ---------- */
+.btn {
+    display: inline-block;
+    padding: 0.65rem 1.4rem;
+    border: 1.5px solid var(--color-primario);
+    border-radius: var(--radio-boton);
+    background: var(--color-primario);
+    color: var(--color-blanco);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background var(--transicion), border-color var(--transicion), box-shadow var(--transicion), transform var(--transicion);
+}
+.btn:hover { background: var(--color-primario-oscuro); border-color: var(--color-primario-oscuro); box-shadow: 0 2px 8px rgba(255, 51, 0, 0.25); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 2px solid var(--color-primario); outline-offset: 2px; }
+.btn-secundario { background: transparent; color: var(--color-oscuro); border-color: var(--color-borde); }
+.btn-secundario:hover { background: var(--color-fondo-suave); border-color: var(--color-borde); box-shadow: none; }
+.btn-peligro { background: var(--color-error); border-color: var(--color-error); }
+.btn-chico { padding: 0.35rem 0.9rem; font-size: 0.9rem; }
+.btn-bloque { display: block; width: 100%; text-align: center; }
+
+/* ---------- Formularios: <div class="campo"><label>..</label><input></div> ---------- */
+.campo { margin-bottom: 1rem; }
+.campo label { display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.875rem; letter-spacing: 0.01em; }
+.campo input, .campo select, .campo textarea {
+    width: 100%;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio);
+    font: inherit;
+    background: var(--color-blanco);
+    transition: border-color var(--transicion), box-shadow var(--transicion);
+}
+.campo input:focus, .campo select:focus, .campo textarea:focus {
+    outline: none;
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 3px rgba(255, 51, 0, 0.15);
+}
+
+/* ---------- Alertas: <div class="alerta alerta-error"> ---------- */
+.alerta { padding: 0.75rem 1rem; border-radius: var(--radio); margin-bottom: 1rem; border: 1px solid; border-left-width: 4px; }
+.alerta-error { color: var(--color-error); background: #fdeeee; border-color: #f3c4c4; border-left-color: var(--color-error); }
+.alerta-exito { color: var(--color-exito); background: #eaf6ef; border-color: #bfe2cd; border-left-color: var(--color-exito); }
+.alerta-aviso { color: var(--color-aviso); background: #fff6e6; border-color: #f1dcae; border-left-color: var(--color-aviso); }
+
+/* ---------- Tablas: <table class="tabla"> ---------- */
+.tabla { width: 100%; border-collapse: collapse; background: var(--color-blanco); }
+.tabla th, .tabla td { padding: 0.7rem 0.75rem; border-bottom: 1px solid var(--color-borde); text-align: left; }
+.tabla th { border-bottom: 2px solid var(--color-oscuro); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-texto-suave); }
+.tabla tbody tr:hover { background: var(--color-fondo-suave); }
+
+/* ---------- Rejilla: <div class="rejilla"> con tarjetas dentro ---------- */
+.rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
+
+@media (max-width: 768px) {
+    .barra { padding: 0.75rem 1rem; }
+    .barra-usuario { display: none; }
+    .contenedor { padding: 1.75rem 1rem; }
+}

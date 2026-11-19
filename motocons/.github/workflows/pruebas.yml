@@ -1,0 +1,69 @@
+# Pruebas automáticas en cada PR hacia dev o main. Si algo falla, no se puede fusionar.
+name: Pruebas
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev, main]
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -proot"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # historial completo, para ver qué archivos cambia el PR
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_mysql
+
+      - name: El PR solo toca lo de su grupo
+        if: github.event_name == 'pull_request'
+        env:
+          DESTINO: ${{ github.base_ref }}
+          ORIGEN: ${{ github.head_ref }}
+          AUTOR: ${{ github.event.pull_request.user.login }}
+        run: bash .github/pruebas/carpetas_pr.sh "$DESTINO" "$ORIGEN" "$AUTOR"
+
+      - name: No se suben contraseñas
+        run: |
+          prohibidos=$(git ls-files | grep -E '(^|/)(config\.php|\.env)$' | grep -v 'config\.ejemplo\.php' || true)
+          if [ -n "$prohibidos" ]; then
+            echo "::error::Estos archivos no se pueden subir: $prohibidos"
+            exit 1
+          fi
+
+      - name: Sintaxis PHP
+        run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+
+      - name: Convenciones de los módulos
+        run: php .github/pruebas/convenciones.php
+
+      - name: Base de datos (database/motocons.sql)
+        run: mysql -h 127.0.0.1 -uroot -proot < database/motocons.sql
+
+      - name: Las páginas cargan sin errores (inicio, login y cada módulo)
+        run: |
+          sed -e "s/'DB_HOST', 'localhost'/'DB_HOST', '127.0.0.1'/" -e "s/'DB_CLAVE', ''/'DB_CLAVE', 'root'/" \
+            config/config.ejemplo.php > config/config.php
+          php -d display_errors=1 -d html_errors=1 -d error_reporting=-1 \
+            -S localhost:8000 -t public > /dev/null 2>&1 &
+          sleep 2
+          bash .github/pruebas/paginas.sh
